@@ -169,7 +169,14 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; padding: 1rem;'>
     <p style='color: #666;'>Road Construction Material Recommender System</p>
-    <p style='color: #666;'>Built with ❤️ by Rapid_build</p>
+    <p style='color: #666;'>Built with ❤️ by Team:</p>
+    <div style='color: #888; font-size: 0.9em; margin: 0.5rem 0;'>
+        <p>24BCE10523 • MOHD OWAIS</p>
+        <p>24BCE10530 • TANISHKA PRASHANT PAGAR</p>
+        <p>24BCE10561 • AYUSH NAGDA</p>
+        <p>24BCE10589 • DIKSHA CHOUDHARY</p>
+        <p>24BCE10596 • ASHWIN GOYAL</p>
+    </div>
     <p style='color: #666;'>Professional Engineering Tool • 2024</p>
 </div>
 """, unsafe_allow_html=True)
