@@ -18,13 +18,15 @@ st.set_page_config(
 with open('styles/custom.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Header with custom styling
+# Header with custom styling and watermark
 st.markdown("""
-    <div style='text-align: center; padding: 2rem 0;'>
-        <h1 style='font-size: 2.5em; margin-bottom: 1rem;'>🛣️ Road Construction Material Recommender</h1>
-        <p style='font-size: 1.2em; color: #999;'>
-            Advanced material recommendations for modern road construction projects
-        </p>
+    <div class='title-section'>
+        <div class='title-content'>
+            <h1 style='font-size: 2.5em; margin-bottom: 1rem;'>🛣️ Road Construction Material Recommender</h1>
+            <p style='font-size: 1.2em; color: #999;'>
+                Advanced material recommendations for modern road construction projects
+            </p>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -61,7 +63,6 @@ if st.button("Generate Recommendations", key="generate_btn"):
         st.error("Please enter a project location")
     else:
         with st.spinner('Analyzing parameters and generating recommendations...'):
-            # Get recommendations
             params = {
                 'location': location,
                 'traffic_load': traffic_load,
@@ -115,9 +116,11 @@ if st.button("Generate Recommendations", key="generate_btn"):
                         paper_bgcolor="rgba(0,0,0,0)",
                         plot_bgcolor="rgba(0,0,0,0)",
                         font_color="white",
-                        showlegend=True
+                        showlegend=True,
+                        height=600,
+                        width=None
                     )
-                    st.plotly_chart(fig)
+                    st.plotly_chart(fig, use_container_width=True)
 
                 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -137,14 +140,15 @@ if st.button("Generate Recommendations", key="generate_btn"):
             df = pd.DataFrame(comparison_data)
             st.table(df)
 
-            # Bar chart comparison with updated styling
+            # Bar chart comparison with updated styling and size
             fig = px.bar(
                 df,
                 x='Material',
                 y=['Durability', 'Cost Factor', 'Weather Resistance', 'Load Capacity'],
                 title="Material Properties Comparison",
                 barmode='group',
-                template="plotly_dark"
+                template="plotly_dark",
+                height=600
             )
             fig.update_layout(
                 xaxis_title="Material",
@@ -152,9 +156,11 @@ if st.button("Generate Recommendations", key="generate_btn"):
                 legend_title="Properties",
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
-                font_color="white"
+                font_color="white",
+                showlegend=True,
+                margin=dict(l=50, r=50, t=50, b=50)
             )
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, use_container_width=True)
 
 # Footer
 st.markdown("---")
