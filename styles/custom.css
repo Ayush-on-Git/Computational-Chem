@@ -1,31 +1,85 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap');
 
+/* Main app styling */
 .stApp {
     font-family: 'IBM Plex Sans', sans-serif;
+    background-image: url('https://images.unsplash.com/photo-1517584367729-e024d0c15c95?auto=format&fit=crop&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
+/* Add overlay to improve readability */
+.stApp::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(18, 18, 18, 0.85);
+    z-index: -1;
+}
+
+/* Button styling */
 .stButton button {
-    background-color: #2B6CB0;
+    background-color: #1E88E5;
     color: white;
     border-radius: 4px;
     padding: 0.5rem 1rem;
+    border: none;
+    transition: all 0.3s ease;
 }
 
+.stButton button:hover {
+    background-color: #1565C0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Card styling */
 .success-card {
-    background-color: #48BB78;
+    background-color: #00897B;
     padding: 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+/* Data table styling */
 .data-table {
     font-family: 'Roboto', sans-serif;
     width: 100%;
+    background: rgba(31, 31, 31, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
 }
 
+/* Parameter form styling */
 .parameter-form {
-    background-color: white;
+    background: rgba(31, 31, 31, 0.7);
+    backdrop-filter: blur(10px);
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Custom chart styling */
+.js-plotly-plot {
+    background: rgba(31, 31, 31, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Header styling */
+h1, h2, h3 {
+    color: #1E88E5;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Selectbox styling */
+.stSelectbox {
+    background: rgba(31, 31, 31, 0.7);
+    border-radius: 4px;
 }

@@ -4,7 +4,8 @@ address = "0.0.0.0"
 port = 5000
 
 [theme]
-primaryColor = "#2B6CB0"
-backgroundColor = "#F7FAFC"
-secondaryBackgroundColor = "#718096"
-textColor = "#1A202C"
+base = "dark"
+primaryColor = "#1E88E5"
+backgroundColor = "#121212"
+secondaryBackgroundColor = "#1F1F1F"
+textColor = "#FFFFFF"
