@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
+import numpy as np
 import base64
 from pathlib import Path
 
@@ -94,18 +95,41 @@ if st.button("Generate Recommendations", key="generate_btn"):
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown(f"### {top_recommendation['material']}")
-                    st.markdown(f"**Suitability Score:** {top_recommendation['score']:.1f}%")
-                    st.markdown("### Key Advantages")
-                    for advantage in top_recommendation['advantages']:
-                        st.markdown(f"✓ {advantage}")
+                    st.markdown(f"**Overall Score:** {top_recommendation['score']:.1f}%")
+
+                    # Detailed scores
+                    st.markdown("### Detailed Analysis")
+                    scores = top_recommendation['detailed_scores']
+                    st.markdown(f"🏗️ Load Capacity: {scores['load_capacity']:.1f}/10")
+                    st.markdown(f"💰 Cost Efficiency: {scores['cost_efficiency']:.1f}/10")
+                    st.markdown(f"🌱 Environmental Impact: {scores['environmental_impact']:.1f}/10")
+                    st.markdown(f"🌡️ Weather Resistance: {scores['weather_resistance']:.1f}/10")
+
+                    # Maintenance predictions
+                    st.markdown("### Maintenance Predictions")
+                    predictions = top_recommendation['maintenance_predictions']
+                    st.markdown(f"🔄 Maintenance Interval: {predictions['interval_years']:.1f} years")
+                    st.markdown(f"💵 Annual Maintenance Cost Factor: {predictions['annual_cost_factor']:.2f}")
 
                 with col2:
-                    # Radar chart with updated styling
-                    properties = top_recommendation['properties']
+                    # Radar chart with updated metrics
+                    detailed_scores = top_recommendation['detailed_scores']
                     fig = go.Figure()
                     fig.add_trace(go.Scatterpolar(
-                        r=list(properties.values()),
-                        theta=list(properties.keys()),
+                        r=[
+                            scores['load_capacity'],
+                            scores['cost_efficiency'],
+                            scores['environmental_impact'],
+                            scores['weather_resistance'],
+                            top_recommendation['properties']['durability']
+                        ],
+                        theta=[
+                            'Load Capacity',
+                            'Cost Efficiency',
+                            'Environmental Impact',
+                            'Weather Resistance',
+                            'Durability'
+                        ],
                         fill='toself',
                         name=top_recommendation['material'],
                         line_color='#1E88E5'
@@ -131,35 +155,36 @@ if st.button("Generate Recommendations", key="generate_btn"):
 
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            # Comparison table
+            # Comparison table with advanced metrics
             st.subheader("Material Comparison")
             comparison_data = []
             for rec in recommendations:
                 comparison_data.append({
                     'Material': rec['material'],
-                    'Suitability Score': f"{rec['score']:.1f}%",
-                    'Durability': rec['properties']['durability'],
-                    'Cost Factor': rec['properties']['cost'],
-                    'Weather Resistance': rec['properties']['weather_resistance'],
-                    'Load Capacity': rec['properties']['load_capacity']
+                    'Overall Score': f"{rec['score']:.1f}%",
+                    'Load Capacity': rec['detailed_scores']['load_capacity'],
+                    'Cost Efficiency': rec['detailed_scores']['cost_efficiency'],
+                    'Environmental Impact': rec['detailed_scores']['environmental_impact'],
+                    'Weather Resistance': rec['detailed_scores']['weather_resistance'],
+                    'Maintenance Interval (Years)': rec['maintenance_predictions']['interval_years']
                 })
 
             df = pd.DataFrame(comparison_data)
             st.table(df)
 
-            # Bar chart comparison with updated styling and size
+            # Advanced metrics comparison chart
             fig = px.bar(
                 df,
                 x='Material',
-                y=['Durability', 'Cost Factor', 'Weather Resistance', 'Load Capacity'],
-                title="Material Properties Comparison",
+                y=['Load Capacity', 'Cost Efficiency', 'Environmental Impact', 'Weather Resistance'],
+                title="Advanced Material Properties Comparison",
                 barmode='group',
                 template="plotly_dark",
                 height=600
             )
             fig.update_layout(
                 xaxis_title="Material",
-                yaxis_title="Rating (0-10)",
+                yaxis_title="Score (0-10)",
                 legend_title="Properties",
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",

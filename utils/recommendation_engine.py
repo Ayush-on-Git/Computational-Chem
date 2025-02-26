@@ -1,54 +1,32 @@
 import numpy as np
 from data.materials_database import MATERIALS_DATABASE
-
-def calculate_material_score(material_properties, params):
-    """Calculate material suitability score based on input parameters."""
-    score = 0
-    weight_factors = {
-        'traffic_load': 0.35,
-        'weather': 0.25,
-        'soil_type': 0.25,
-        'durability': 0.15
-    }
-    
-    # Traffic load compatibility
-    if params['traffic_load'] in material_properties['suitable_conditions']['traffic_load']:
-        score += 100 * weight_factors['traffic_load']
-    
-    # Weather compatibility
-    if params['weather'] in material_properties['suitable_conditions']['weather'] or \
-       'all' in material_properties['suitable_conditions']['weather']:
-        score += 100 * weight_factors['weather']
-    
-    # Soil type compatibility
-    if params['soil_type'] in material_properties['suitable_conditions']['soil_type'] or \
-       'all' in material_properties['suitable_conditions']['soil_type']:
-        score += 100 * weight_factors['soil_type']
-    
-    # Property scores
-    property_score = np.mean([
-        material_properties['properties']['durability'],
-        material_properties['properties']['weather_resistance'],
-        material_properties['properties']['load_capacity']
-    ]) * 10
-    
-    score += property_score * weight_factors['durability']
-    
-    return score
+from utils.advanced_calculations import get_comprehensive_score
 
 def get_recommendations(params):
-    """Get material recommendations based on input parameters."""
+    """Get material recommendations based on input parameters with advanced calculations."""
     recommendations = []
-    
+
     for material, properties in MATERIALS_DATABASE.items():
-        score = calculate_material_score(properties, params)
+        properties_with_material = {**properties, 'material': material}
+        scores = get_comprehensive_score(params, properties_with_material)
+
         recommendations.append({
             'material': material,
-            'score': score,
+            'score': scores['final_score'],
             'properties': properties['properties'],
-            'advantages': properties['advantages']
+            'advantages': properties['advantages'],
+            'detailed_scores': {
+                'load_capacity': scores['load_capacity_score'],
+                'cost_efficiency': scores['cost_efficiency_score'],
+                'environmental_impact': scores['environmental_score'],
+                'weather_resistance': scores['weather_resistance_score']
+            },
+            'maintenance_predictions': {
+                'interval_years': scores['maintenance_interval'],
+                'annual_cost_factor': scores['annual_maintenance_cost']
+            }
         })
-    
-    # Sort by score
+
+    # Sort by final score
     recommendations.sort(key=lambda x: x['score'], reverse=True)
     return recommendations
