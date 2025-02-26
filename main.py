@@ -2,7 +2,6 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
-import numpy as np
 import base64
 from pathlib import Path
 
@@ -17,11 +16,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Load and encode background image
-def get_base64_encoded_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode()
-
 # Load custom CSS
 with open('styles/custom.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -32,7 +26,7 @@ st.markdown("""
         <div class='title-content'>
             <h1 style='font-size: 2.5em; margin-bottom: 1rem;'>🛣️ Road Construction Material Recommender</h1>
             <p style='font-size: 1.2em; color: #999;'>
-                Advanced material recommendations for modern road construction projects
+                Material recommendations for modern road construction projects
             </p>
         </div>
     </div>
@@ -95,41 +89,18 @@ if st.button("Generate Recommendations", key="generate_btn"):
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown(f"### {top_recommendation['material']}")
-                    st.markdown(f"**Overall Score:** {top_recommendation['score']:.1f}%")
-
-                    # Detailed scores
-                    st.markdown("### Detailed Analysis")
-                    scores = top_recommendation['detailed_scores']
-                    st.markdown(f"🏗️ Load Capacity: {scores['load_capacity']:.1f}/10")
-                    st.markdown(f"💰 Cost Efficiency: {scores['cost_efficiency']:.1f}/10")
-                    st.markdown(f"🌱 Environmental Impact: {scores['environmental_impact']:.1f}/10")
-                    st.markdown(f"🌡️ Weather Resistance: {scores['weather_resistance']:.1f}/10")
-
-                    # Maintenance predictions
-                    st.markdown("### Maintenance Predictions")
-                    predictions = top_recommendation['maintenance_predictions']
-                    st.markdown(f"🔄 Maintenance Interval: {predictions['interval_years']:.1f} years")
-                    st.markdown(f"💵 Annual Maintenance Cost Factor: {predictions['annual_cost_factor']:.2f}")
+                    st.markdown(f"**Suitability Score:** {top_recommendation['score']:.1f}%")
+                    st.markdown("### Key Advantages")
+                    for advantage in top_recommendation['advantages']:
+                        st.markdown(f"✓ {advantage}")
 
                 with col2:
-                    # Radar chart with updated metrics
-                    detailed_scores = top_recommendation['detailed_scores']
+                    # Radar chart with material properties
+                    properties = top_recommendation['properties']
                     fig = go.Figure()
                     fig.add_trace(go.Scatterpolar(
-                        r=[
-                            scores['load_capacity'],
-                            scores['cost_efficiency'],
-                            scores['environmental_impact'],
-                            scores['weather_resistance'],
-                            top_recommendation['properties']['durability']
-                        ],
-                        theta=[
-                            'Load Capacity',
-                            'Cost Efficiency',
-                            'Environmental Impact',
-                            'Weather Resistance',
-                            'Durability'
-                        ],
+                        r=list(properties.values()),
+                        theta=list(properties.keys()),
                         fill='toself',
                         name=top_recommendation['material'],
                         line_color='#1E88E5'
@@ -155,36 +126,35 @@ if st.button("Generate Recommendations", key="generate_btn"):
 
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            # Comparison table with advanced metrics
+            # Comparison table
             st.subheader("Material Comparison")
             comparison_data = []
             for rec in recommendations:
                 comparison_data.append({
                     'Material': rec['material'],
-                    'Overall Score': f"{rec['score']:.1f}%",
-                    'Load Capacity': rec['detailed_scores']['load_capacity'],
-                    'Cost Efficiency': rec['detailed_scores']['cost_efficiency'],
-                    'Environmental Impact': rec['detailed_scores']['environmental_impact'],
-                    'Weather Resistance': rec['detailed_scores']['weather_resistance'],
-                    'Maintenance Interval (Years)': rec['maintenance_predictions']['interval_years']
+                    'Suitability Score': f"{rec['score']:.1f}%",
+                    'Durability': rec['properties']['durability'],
+                    'Cost Factor': rec['properties']['cost'],
+                    'Weather Resistance': rec['properties']['weather_resistance'],
+                    'Load Capacity': rec['properties']['load_capacity']
                 })
 
             df = pd.DataFrame(comparison_data)
             st.table(df)
 
-            # Advanced metrics comparison chart
+            # Bar chart comparison
             fig = px.bar(
                 df,
                 x='Material',
-                y=['Load Capacity', 'Cost Efficiency', 'Environmental Impact', 'Weather Resistance'],
-                title="Advanced Material Properties Comparison",
+                y=['Durability', 'Cost Factor', 'Weather Resistance', 'Load Capacity'],
+                title="Material Properties Comparison",
                 barmode='group',
                 template="plotly_dark",
                 height=600
             )
             fig.update_layout(
                 xaxis_title="Material",
-                yaxis_title="Score (0-10)",
+                yaxis_title="Rating (0-10)",
                 legend_title="Properties",
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
