@@ -21,12 +21,9 @@ def get_base64_encoded_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode()
 
-background_image = get_base64_encoded_image("attached_assets/AdobeStock_3587392_Preview.jpeg")
-
 # Load custom CSS
 with open('styles/custom.css') as f:
-    css_content = f.read().replace('{background_image}', background_image)
-    st.markdown(f'<style>{css_content}</style>', unsafe_allow_html=True)
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # Header with custom styling and watermark
 st.markdown("""
