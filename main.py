@@ -1,3 +1,4 @@
+
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
@@ -7,6 +8,15 @@ from pathlib import Path
 
 from data.materials_database import WEATHER_CONDITIONS, TRAFFIC_LOADS, SOIL_TYPES
 from utils.recommendation_engine import get_recommendations
+
+# Function to convert an image to a base64 string
+def get_image_base64(filepath: str):
+    """Encodes an image file to a base64 string for embedding in HTML."""
+    mime_type = filepath.split('.')[-1].lower()
+    with open(filepath, "rb") as f:
+        content_bytes = f.read()
+        content_b64encoded = base64.b64encode(content_bytes).decode()
+    return f"data:image/{mime_type};base64,{content_b64encoded}"
 
 # Page configuration
 st.set_page_config(
@@ -20,10 +30,14 @@ st.set_page_config(
 with open('styles/custom.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Header with custom styling and watermark
-st.markdown("""
+# Get base64 image string
+image_base64 = get_image_base64("styles/background-img.jpg")  # Change path to your image
+
+# Header with custom styling and embedded image
+st.markdown(f"""
     <div class='title-section'>
-        <div class='title-content'>
+        <div class='title-content' style="text-align: center;">
+            <img src="{image_base64}" alt="Road Construction" style="width: 100%; border-radius: 10px; margin-top: 10px;">
             <h1 style='font-size: 2.5em; margin-bottom: 1rem;'>🛣️ Road Construction Material Recommender</h1>
             <p style='font-size: 1.2em; color: #999;'>
                 Material recommendations for modern road construction projects
@@ -79,9 +93,7 @@ if st.button("Generate Recommendations", key="generate_btn"):
 
             # Top recommendation
             with st.container():
-                st.markdown("""
-                    <div style='background: rgba(31, 31, 31, 0.7); padding: 2rem; border-radius: 8px; margin-bottom: 2rem;'>
-                """, unsafe_allow_html=True)
+                st.markdown("""<div style='background: rgba(31, 31, 31, 0.7); padding: 2rem; border-radius: 8px; margin-bottom: 2rem;'>""", unsafe_allow_html=True)
 
                 st.subheader("Best Match")
                 top_recommendation = recommendations[0]
@@ -119,8 +131,7 @@ if st.button("Generate Recommendations", key="generate_btn"):
                         plot_bgcolor="rgba(0,0,0,0)",
                         font_color="white",
                         showlegend=True,
-                        height=600,
-                        width=None
+                        height=600
                     )
                     st.plotly_chart(fig, use_container_width=True)
 
